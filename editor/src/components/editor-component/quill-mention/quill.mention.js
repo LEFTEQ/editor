@@ -13,7 +13,8 @@ export default class Mention {
     this.values = [];
 
     this.quill = quill;
-    console.log(quill);
+
+    console.log(this.quill);
 
     this.options = {
       source: null,

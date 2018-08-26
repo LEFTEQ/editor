@@ -16,6 +16,8 @@
     "test.watch": "jest --watch"
   },
   "dependencies": {
+    "highlight.js": "^9.12.0",
+    "prismjs": "^1.15.0",
     "quill": "github:vanooo/quill",
     "quill-mention": "^2.0.0"
   },

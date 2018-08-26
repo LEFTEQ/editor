@@ -1,46 +1,62 @@
 import { Component, Prop, Element } from '@stencil/core';
+import highlight from 'highlight.js';
+import javascript from 'highlight.js/lib/languages/javascript';
 import Quill from 'quill';
-import Mention from './quill-mention/src/quill.mention';
+import Mention from './quill-mention/quill.mention';
+import Prism from 'prismjs';
+
 @Component({
   tag: 'editor-component',
   styleUrl: 'editor-component.scss',
-  shadow: true
+  shadow: false
 })
 export class EditorComponent {
   @Element() editor: HTMLElement;
   @Prop() first: string;
   @Prop() last: string;
-  atValues = [
+  baValues = [
     { id: 1, value: 'Fredrik Sundqvist' },
     { id: 2, value: 'Patrik Sjölin' }
   ];
-  hashValues = [
+  caValues = [
     { id: 3, value: 'Fredrik Sundqvist 2' },
     { id: 4, value: 'Patrik Sjölin 2' }
   ]
   constructor() {
+    highlight.registerLanguage('javascript', javascript);
+    highlight.configure({
+      languages: ['javascript']
+    });
 
 
   }
   componentDidLoad() {
-    console.log("fff", Mention);
 
-    new Quill(this.editor.shadowRoot.querySelector("#editor"), {
+    const mention = Mention;
+
+
+
+    const quill = new Quill(this.editor.querySelector("#editor"), {
       modules: {
-        toolbar: this.editor.shadowRoot.querySelector("#toolbar"),
+        toolbar: [['code-block']],
+        // syntax: {
+        //   highlight: text => highlight.highlightAuto(text).value
+        // },
         mention: {
           allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
-          mentionDenotationChars: ["ba.", "#"],
-          container: this.editor.shadowRoot.querySelector("#editor-wrapper"),
+          mentionDenotationChars: ["ba.", "ca."],
+          container: this.editor.querySelector("#editor-wrapper"),
           source: (searchTerm, renderList, mentionChar) => {
             let values;
 
             if (mentionChar === "ba.") {
-              values = this.atValues;
+              values = this.baValues;
               console.log("thisvalus", values);
 
+            } else if (mentionChar === "ca.") {
+              values = this.caValues;
             } else {
-              values = this.hashValues;
+
             }
 
             if (searchTerm.length === 0) {
@@ -57,6 +73,11 @@ export class EditorComponent {
       theme: 'snow'
     });
 
+    const ql = document.querySelector(".ql-editor p");
+    quill.on("text-change", (delta, oldContents, source) => {
+      Prism.highlightElement(ql);
+      // return false;
+    })
 
 
   }
